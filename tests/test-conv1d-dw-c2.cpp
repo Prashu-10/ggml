@@ -3,13 +3,7 @@
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
 
-#ifdef GGML_USE_CUDA
-#include "ggml-cuda.h"
-#endif
 
-#ifdef GGML_USE_METAL
-#include "ggml-metal.h"
-#endif
 
 #include <cassert>
 #include <cmath>
@@ -73,25 +67,6 @@ void load_model(test_model & model, bool use_gpu = false) {
     };
 
     // initialize the backend
-#ifdef GGML_USE_CUDA
-    if (use_gpu) {
-        fprintf(stderr, "%s: using CUDA backend\n", __func__);
-        model.backend = ggml_backend_cuda_init(0);
-        if (!model.backend) {
-            fprintf(stderr, "%s: ggml_backend_cuda_init() failed\n", __func__);
-        }
-    }
-#endif
-
-#ifdef GGML_USE_METAL
-    if (use_gpu) {
-        fprintf(stderr, "%s: using Metal backend\n", __func__);
-        model.backend = ggml_backend_metal_init();
-        if (!model.backend) {
-            fprintf(stderr, "%s: ggml_backend_metal_init() failed\n", __func__);
-        }
-    }
-#endif
 
     if(!model.backend) {
         // fallback to CPU backend
@@ -124,11 +99,7 @@ void load_model(test_model & model, bool use_gpu = false) {
     // alloc memory
     ggml_tallocr_alloc(&alloc, model.input);
 
-    if(ggml_backend_is_cpu(model.backend)
-#ifdef GGML_USE_METAL
-                || ggml_backend_is_metal(model.backend)
-#endif
-    ) {
+    if(ggml_backend_is_cpu(model.backend)) {
         memcpy(model.input->data, input_data, ggml_nbytes(model.input));
     } else {
         ggml_backend_tensor_set(model.input, input_data, 0, ggml_nbytes(model.input));

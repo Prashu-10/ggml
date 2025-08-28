@@ -3,13 +3,6 @@
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
 
-#ifdef GGML_USE_CUDA
-#include "ggml-cuda.h"
-#endif
-
-#ifdef GGML_USE_METAL
-#include "ggml-metal.h"
-#endif
 
 #include <cstdio>
 #include <cstring>
@@ -101,26 +94,6 @@ void load_model(test_model & model, bool use_gpu = false) {
 
     ggml_log_set(ggml_log_callback_default, nullptr);
 
-    // initialize the backend
-#ifdef GGML_USE_CUDA
-    if (use_gpu) {
-        fprintf(stderr, "%s: using CUDA backend\n", __func__);
-        model.backend = ggml_backend_cuda_init(0);
-        if (!model.backend) {
-            fprintf(stderr, "%s: ggml_backend_cuda_init() failed\n", __func__);
-        }
-    }
-#endif
-
-#ifdef GGML_USE_METAL
-    if (use_gpu) {
-        fprintf(stderr, "%s: using Metal backend\n", __func__);
-        model.backend = ggml_backend_metal_init();
-        if (!model.backend) {
-            fprintf(stderr, "%s: ggml_backend_metal_init() failed\n", __func__);
-        }
-    }
-#endif
 
     if(!model.backend) {
         // fallback to CPU backend
@@ -210,11 +183,7 @@ void load_model(test_model & model, bool use_gpu = false) {
     // alloc memory
     ggml_tallocr_alloc(&alloc, model.b_0);
 
-    if(ggml_backend_is_cpu(model.backend)
-#ifdef GGML_USE_METAL
-                || ggml_backend_is_metal(model.backend)
-#endif
-    ) {
+    if(ggml_backend_is_cpu(model.backend)) {
         memcpy(model.b_0->data, bdata_0, ggml_nbytes(model.b_0));
     } else {
         ggml_backend_tensor_set(model.b_0, bdata_0, 0, ggml_nbytes(model.b_0));
@@ -223,11 +192,7 @@ void load_model(test_model & model, bool use_gpu = false) {
     // alloc memory
     ggml_tallocr_alloc(&alloc, model.b_1);
 
-    if(ggml_backend_is_cpu(model.backend)
-#ifdef GGML_USE_METAL
-                || ggml_backend_is_metal(model.backend)
-#endif
-    ) {
+    if(ggml_backend_is_cpu(model.backend)) {
         memcpy(model.b_1->data, bdata_1, ggml_nbytes(model.b_1));
     } else {
         ggml_backend_tensor_set(model.b_1, bdata_1, 0, ggml_nbytes(model.b_1));
@@ -236,11 +201,7 @@ void load_model(test_model & model, bool use_gpu = false) {
      // alloc memory
     ggml_tallocr_alloc(&alloc, model.b_2);
 
-    if(ggml_backend_is_cpu(model.backend)
-#ifdef GGML_USE_METAL
-                || ggml_backend_is_metal(model.backend)
-#endif
-    ) {
+    if(ggml_backend_is_cpu(model.backend)) {
         memcpy(model.b_2->data, bdata_2, ggml_nbytes(model.b_2));
     } else {
         ggml_backend_tensor_set(model.b_2, bdata_2, 0, ggml_nbytes(model.b_2));
@@ -249,11 +210,7 @@ void load_model(test_model & model, bool use_gpu = false) {
     // alloc memory
     ggml_tallocr_alloc(&alloc, model.b_3);
 
-    if(ggml_backend_is_cpu(model.backend)
-#ifdef GGML_USE_METAL
-                || ggml_backend_is_metal(model.backend)
-#endif
-    ) {
+    if(ggml_backend_is_cpu(model.backend)) {
         memcpy(model.b_3->data, data, ggml_nbytes(model.b_3));
     } else {
         ggml_backend_tensor_set(model.b_3, data, 0, ggml_nbytes(model.b_3));
@@ -263,11 +220,7 @@ void load_model(test_model & model, bool use_gpu = false) {
    // alloc memory
     ggml_tallocr_alloc(&alloc, model.b_4);
 
-    if(ggml_backend_is_cpu(model.backend)
-#ifdef GGML_USE_METAL
-                || ggml_backend_is_metal(model.backend)
-#endif
-    ) {
+    if(ggml_backend_is_cpu(model.backend)) {
         memcpy(model.b_4->data, data, ggml_nbytes(model.b_4));
     } else {
         ggml_backend_tensor_set(model.b_4, data, 0, ggml_nbytes(model.b_4));

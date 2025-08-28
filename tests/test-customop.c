@@ -5,15 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined(_WIN32)
-#include <windows.h>
-typedef volatile LONG atomic_int;
-static LONG atomic_fetch_add(atomic_int * ptr, LONG inc) {
-    return InterlockedExchangeAdd(ptr, inc);
-}
-#else
-#include <stdatomic.h>
-#endif
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))

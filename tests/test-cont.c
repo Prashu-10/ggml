@@ -2,9 +2,6 @@
 #include "ggml-cpu.h"
 #include "ggml.h"
 
-#ifdef GGML_USE_CUDA
-#include "ggml-cuda.h"
-#endif
 
 #include <stdlib.h>
 #include <string.h>
@@ -31,10 +28,6 @@ struct ggml_context* make_ctx(void) {
 ggml_backend_t make_backend(void) {
     ggml_backend_t backend = NULL;
 
-#ifdef GGML_USE_CUDA
-    backend = ggml_backend_cuda_init(0);
-    GGML_ASSERT(backend != NULL);
-#endif
 
     if (!backend) {
         backend = ggml_backend_cpu_init();
